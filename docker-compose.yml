@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  landing-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: landing-frontend
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.10'
+          memory: 64M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+networks:
+  app-network:
+    external: true
+    name: docker-apps_app-network 
